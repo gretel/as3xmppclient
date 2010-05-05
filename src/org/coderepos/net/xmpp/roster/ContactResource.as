@@ -106,6 +106,13 @@ package org.coderepos.net.xmpp.roster
             return caps;
         }
 
+        public function get last() : uint {
+            return _last;
+        }
+
+        public function set last(value : uint) : void {
+            _last = value;
+        }
     }
 }
 

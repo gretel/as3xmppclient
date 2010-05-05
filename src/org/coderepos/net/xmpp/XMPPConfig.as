@@ -74,7 +74,7 @@ package org.coderepos.net.xmpp
                 _cap.addFeature(XMPPNamespace.DISCO_INFO);
                 _cap.addFeature(XMPPNamespace.VCARD_UPDATE);
                 _cap.addFeature(XMPPNamespace.IQ_VERSION);
-                //_cap.addFeature(XMPPNamespace.IQ_LAST);
+                _cap.addFeature(XMPPNamespace.IQ_LAST);
             }
             return _cap;
         }

@@ -12,6 +12,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package org.coderepos.net.xmpp.stream
 {
+    import com.ericfeminella.collections.HashMap;
+
     import flash.events.Event;
     import flash.events.EventDispatcher;
     import flash.events.IOErrorEvent;
@@ -61,7 +63,7 @@ package org.coderepos.net.xmpp.stream
         private var _boundJID:JID;
         private var _idGenerator:IDGenerator;
         private var _reconnectionManager:ReconnectionManager;
-        private var _roster:Object;
+        private var _roster:HashMap;
         private var _services:Object;
         private var _isReady:Boolean;
         private var _capStore:IEntityCapabilitiesStore;
@@ -73,7 +75,7 @@ package org.coderepos.net.xmpp.stream
         {
             _config      = config;
             _attributes  = {};
-            _roster      = {};
+            _roster      = new HashMap(true);
             _services    = {};
             _isReady     = false;
             _features    = new XMPPServerFeatures();
@@ -291,16 +293,14 @@ package org.coderepos.net.xmpp.stream
             return (serviceJID in _services);
         }
 
-        public function get roster():Object
+        public function get roster():HashMap
         {
-            // TODO: should make iterator to encapsulate?
             return _roster;
         }
 
         public function getRosterItem(jid:JID):RosterItem
         {
-            var bareJID:String = jid.toBareJIDString();
-            return (bareJID in _roster) ? _roster[bareJID] : null;
+            return _roster.getValue(jid.toBareJIDString());
         }
 
         public function getContactResource(jid:JID):ContactResource
@@ -350,10 +350,11 @@ package org.coderepos.net.xmpp.stream
         {
             var contact:JID = rosterItem.jid;
             var bareJID:String = contact.toBareJIDString();
-            if (bareJID in _roster) {
-                _roster[bareJID].updateItem(rosterItem);
+            var item : RosterItem = _roster.getValue(bareJID);
+            if (item is RosterItem) {
+                item.updateItem(rosterItem);
             } else {
-                _roster[bareJID] = rosterItem;
+                _roster.put(bareJID, rosterItem);
             }
             dispatchEvent(new XMPPRosterEvent(XMPPRosterEvent.CHANGED, contact));
         }
@@ -549,7 +550,7 @@ package org.coderepos.net.xmpp.stream
 
         public function unsubscribe(contact:JID):void
         {
-            if (_isReady && contact.toBareJIDString() in _roster)
+            if (_isReady && _roster.containsKey(contact.toBareJIDString()))
                 send('<presence to="' + contact.toBareJIDString()
                     + '" type="' + PresenceType.UNSUBSCRIBE + '" />');
         }
@@ -568,7 +569,9 @@ package org.coderepos.net.xmpp.stream
 
         internal function gotLastSeconds(contact:JID, seconds:uint):void
         {
-            // TODO: search person from roster and update 'seconds'
+            trace('gotLastSeconds', contact.toString(), seconds);
+            var cr : ContactResource = getContactResource(contact);
+            cr.last = seconds;
         }
 
         public function getVersion(contact:JID):void
