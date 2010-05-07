@@ -12,6 +12,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package org.coderepos.net.xmpp.roster
 {
+    import mx.utils.ObjectUtil;
+
     import org.coderepos.net.xmpp.JID;
     import org.coderepos.net.xmpp.XMPPPresence;
     import org.coderepos.net.xmpp.exceptions.XMPPProtocolError;
@@ -88,7 +90,6 @@ package org.coderepos.net.xmpp.roster
             return (resource in _resources);
         }
 
-
         public function setResource(resource:String, presence:XMPPPresence):void
         {
             if (resource in _resources) {
@@ -147,6 +148,16 @@ package org.coderepos.net.xmpp.roster
         public function removeResource(resource:String):void
         {
             delete _resources[resource];
+        }
+
+        public function get status():String
+        {
+            var resource : ContactResource = getActiveResource();
+            if(resource == null)
+            {
+                return null;
+            }
+            return resource.status;
         }
 
         public function get avatarHash():String
