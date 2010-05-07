@@ -14,10 +14,11 @@ package org.coderepos.net.xmpp
 {
     public class StatusType
     {
+        // TODO there is no standard for these
         public static const CHAT:String = "chat";
         public static const AWAY:String = "away";
-        public static const XA:String   = "xa"; // eXtended Away
-        public static const DND:String  = "dnd"; // DoN't Disturb
+        public static const XA:String   = "xa";
+        public static const DND:String  = "dnd";
     }
 }
 
