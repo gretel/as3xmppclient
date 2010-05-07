@@ -1,14 +1,14 @@
 /*
-Copyright (c) Lyo Kato (lyo.kato _at_ gmail.com)
+ Copyright (c) Lyo Kato (lyo.kato _at_ gmail.com)
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 package org.coderepos.net.xmpp.stream
 {
@@ -53,103 +53,103 @@ package org.coderepos.net.xmpp.stream
 
     public class XMPPStream extends EventDispatcher
     {
-        private var _config:XMPPConfig;
-        private var _connection:XMPPConnection;
-        private var _handler:IXMPPStreamHandler;
-        private var _attributes:Object;
-        private var _features:XMPPServerFeatures;
-        private var _saslFactory:SASLMechanismFactory;
-        private var _jid:JID;
-        private var _boundJID:JID;
-        private var _idGenerator:IDGenerator;
-        private var _reconnectionManager:ReconnectionManager;
-        private var _roster:HashMap;
-        private var _services:Object;
-        private var _isReady:Boolean;
-        private var _capStore:IEntityCapabilitiesStore;
-        private var _avatarStore:IAvatarStore;
+        private var _config : XMPPConfig;
+        private var _connection : XMPPConnection;
+        private var _handler : IXMPPStreamHandler;
+        private var _attributes : Object;
+        private var _features : XMPPServerFeatures;
+        private var _saslFactory : SASLMechanismFactory;
+        private var _jid : JID;
+        private var _boundJID : JID;
+        private var _idGenerator : IDGenerator;
+        private var _reconnectionManager : ReconnectionManager;
+        private var _roster : HashMap;
+        private var _services : Object;
+        private var _isReady : Boolean;
+        private var _capStore : IEntityCapabilitiesStore;
+        private var _avatarStore : IAvatarStore;
 
-        public function XMPPStream(config:XMPPConfig,
-            capStore:IEntityCapabilitiesStore=null,
-            avatarStore:IAvatarStore=null)
+        public function XMPPStream(config : XMPPConfig,
+                                   capStore : IEntityCapabilitiesStore = null,
+                                   avatarStore : IAvatarStore = null)
         {
-            _config      = config;
-            _attributes  = {};
-            _roster      = new HashMap(true);
-            _services    = {};
-            _isReady     = false;
-            _features    = new XMPPServerFeatures();
+            _config = config;
+            _attributes = {};
+            _roster = new HashMap(true);
+            _services = {};
+            _isReady = false;
+            _features = new XMPPServerFeatures();
             // XXX: JID validation ?
-            _jid         = new JID(_config.username);
+            _jid = new JID(_config.username);
             _idGenerator = new IDGenerator("req:", 5);
             _saslFactory = new SASLMechanismDefaultFactory(
-                _jid.node, _config.password, null, "xmpp", _config.host);
+                    _jid.node, _config.password, null, "xmpp", _config.host);
             _reconnectionManager = new ReconnectionManager(
-                _config.reconnectionAcceptableInterval,
-                _config.reconnectionMaxCountWithinInterval
-            );
+                    _config.reconnectionAcceptableInterval,
+                    _config.reconnectionMaxCountWithinInterval
+                    );
             _capStore = (capStore == null)
-                ? new EntityCapabilitiesOnMemoryStore() : capStore;
+                    ? new EntityCapabilitiesOnMemoryStore() : capStore;
             _avatarStore = (avatarStore == null)
-                ? new AvatarOnMemoryStore() : avatarStore;
+                    ? new AvatarOnMemoryStore() : avatarStore;
         }
 
-        internal function get applicationName():String
+        internal function get applicationName() : String
         {
             return _config.applicationName;
         }
 
-        internal function get applicationVersion():String
+        internal function get applicationVersion() : String
         {
             return _config.applicationVersion;
         }
 
-        internal function get applicationNode():String
+        internal function get applicationNode() : String
         {
             return _config.applicationNode;
         }
 
-        internal function get applicationType():String
+        internal function get applicationType() : String
         {
             return _config.applicationType;
         }
 
-        internal function get applicationCategory():String
+        internal function get applicationCategory() : String
         {
             return _config.applicationCategory;
         }
 
-        internal function genNextID():String
+        internal function genNextID() : String
         {
             return _idGenerator.generate();
         }
 
-        internal function get domain():String
+        internal function get domain() : String
         {
             return _jid.domain;
         }
 
-        internal function set features(features:XMPPServerFeatures):void
+        internal function set features(features : XMPPServerFeatures) : void
         {
             _features = features;
         }
 
-        public function getAttribute(key:String):String
+        public function getAttribute(key : String) : String
         {
             return (key in _attributes) ? _attributes[key] : null;
         }
 
-        public function setAttribute(key:String, value:String):void
+        public function setAttribute(key : String, value : String) : void
         {
             _attributes[key] = value;
         }
 
-        public function get connected():Boolean
+        public function get connected() : Boolean
         {
             return (_connection != null && _connection.connected);
         }
 
-        public function start():void
+        public function start() : void
         {
             if (connected)
                 throw new Error("already connected.");
@@ -166,32 +166,32 @@ package org.coderepos.net.xmpp.stream
             dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.START));
         }
 
-        public function send(s:String):void
+        public function send(s : String) : void
         {
             if (connected)
                 _connection.send(s);
         }
 
-        internal function setXMLEventHandler(handler:XMLElementEventHandler):void
+        internal function setXMLEventHandler(handler : XMLElementEventHandler) : void
         {
             if (connected)
                 _connection.setXMLEventHandler(handler);
         }
 
-        internal function dispose():void
+        internal function dispose() : void
         {
             _handler = null;
             _isReady = false;
         }
 
-        internal function clearBuffer():void
+        internal function clearBuffer() : void
         {
             //trace("[CLEAR BUFFER]");
             if (_connection != null)
                 _connection.clearBuffer();
         }
 
-        public function disconnect():void
+        public function disconnect() : void
         {
             if (connected) {
                 if (_isReady) {
@@ -206,67 +206,67 @@ package org.coderepos.net.xmpp.stream
             }
         }
 
-        internal function changeState(handler:IXMPPStreamHandler):void
+        internal function changeState(handler : IXMPPStreamHandler) : void
         {
             _handler = handler;
             _handler.run();
         }
 
-        internal function initiated():void
+        internal function initiated() : void
         {
             if (_features.supportTLS) {
                 dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.TLS_NEGOTIATING));
                 changeState(new TLSHandler(this));
             } else {
-                var mech:ISASLMechanism = findProperSASLMechanism();
+                var mech : ISASLMechanism = findProperSASLMechanism();
                 if (mech == null)
-                    // TODO: Accept anonymous?
+                // TODO: Accept anonymous?
                     throw new XMPPProtocolError(
-                        "Server doesn't support SASL mechanisms which this library supports.");
+                            "Server doesn't support SASL mechanisms which this library supports.");
 
                 dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.AUTHENTICATING));
                 changeState(new SASLHandler(this, mech));
             }
         }
 
-        internal function switchToTLS():void
+        internal function switchToTLS() : void
         {
             if (connected)
                 _connection.startTLS();
         }
 
-        internal function tlsNegotiated():void
+        internal function tlsNegotiated() : void
         {
-            var mech:ISASLMechanism = findProperSASLMechanism();
+            var mech : ISASLMechanism = findProperSASLMechanism();
             if (mech == null) {
                 // XXX: Accept anonymous ?
                 throw new XMPPProtocolError(
-                    "Server doesn't support SASL mechanisms which this library supports.");
+                        "Server doesn't support SASL mechanisms which this library supports.");
             }
 
             dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.AUTHENTICATING));
             changeState(new SASLHandler(this, mech));
         }
 
-        internal function authenticated():void
+        internal function authenticated() : void
         {
             if (_features.supportResourceBinding) {
                 dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.BINDING_RESOURCE));
                 changeState(new ResourceBindingHandler(this, _config.resource,
-                    _config.resourceBindingMaxRetryCount));
+                        _config.resourceBindingMaxRetryCount));
             } else {
                 // without Binding
                 throw new XMPPProtocolError(
-                    "Server doesn't support resource-binding");
+                        "Server doesn't support resource-binding");
             }
         }
 
-        public function get boundJID():JID
+        public function get boundJID() : JID
         {
             return _boundJID;
         }
 
-        internal function bindJID(jid:JID):void
+        internal function bindJID(jid : JID) : void
         {
             _boundJID = jid;
             if (_features.supportSession) {
@@ -278,56 +278,56 @@ package org.coderepos.net.xmpp.stream
             }
         }
 
-        internal function establishedSession():void
+        internal function establishedSession() : void
         {
             dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.LOADING_ROSTER));
             changeState(new InitialRosterHandler(this));
         }
 
-        internal function addService(serviceJID:String):void
+        internal function addService(serviceJID : String) : void
         {
             _services[serviceJID] = null;
         }
 
-        internal function hasService(serviceJID:String):Boolean {
+        internal function hasService(serviceJID : String) : Boolean {
             return (serviceJID in _services);
         }
 
-        public function get roster():HashMap
+        public function get roster() : HashMap
         {
             return _roster;
         }
 
-        public function getRosterItem(jid:JID):RosterItem
+        public function getRosterItem(jid : JID) : RosterItem
         {
             return _roster.getValue(jid.toBareJIDString());
         }
 
-        public function getContactResource(jid:JID):ContactResource
+        public function getContactResource(jid : JID) : ContactResource
         {
-            var resource:String = jid.resource;
+            var resource : String = jid.resource;
             if (resource == null || resource.length == 0)
                 return null;
-                //throw new ArgumentError("This is not full JID: " + jid.toString());
-            var item:RosterItem = getRosterItem(jid);
+            //throw new ArgumentError("This is not full JID: " + jid.toString());
+            var item : RosterItem = getRosterItem(jid);
             if (item == null)
                 return null;
             return item.getResource(resource);
         }
 
-        internal function initiatedRoster():void
+        internal function initiatedRoster() : void
         {
             dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.READY));
             changeState(new CompletedHandler(this));
             _isReady = true;
         }
 
-        private function findProperSASLMechanism():ISASLMechanism
+        private function findProperSASLMechanism() : ISASLMechanism
         {
             if (!_features.supportSASL)
                 return null;
-            var mech:ISASLMechanism = null;
-            for each(var mechName:String in _features.saslMechs) {
+            var mech : ISASLMechanism = null;
+            for each(var mechName : String in _features.saslMechs) {
                 //trace(mechName);
                 mech = _saslFactory.getMechanism(mechName);
                 if (mech != null)
@@ -336,20 +336,20 @@ package org.coderepos.net.xmpp.stream
             return mech;
         }
 
-        internal function getPresenceCapsTag():String
+        internal function getPresenceCapsTag() : String
         {
             return _config.buildPresenceCapsTag();
         }
 
-        internal function getDiscoInfoFeatureTags():String
+        internal function getDiscoInfoFeatureTags() : String
         {
             return _config.buildDiscoInfoFeatureTags();
         }
 
-        internal function setRosterItem(rosterItem:RosterItem):void
+        internal function setRosterItem(rosterItem : RosterItem) : void
         {
-            var contact:JID = rosterItem.jid;
-            var bareJID:String = contact.toBareJIDString();
+            var contact : JID = rosterItem.jid;
+            var bareJID : String = contact.toBareJIDString();
             var item : RosterItem = _roster.getValue(bareJID);
             if (item is RosterItem) {
                 item.updateItem(rosterItem);
@@ -359,40 +359,40 @@ package org.coderepos.net.xmpp.stream
             dispatchEvent(new XMPPRosterEvent(XMPPRosterEvent.CHANGED, contact));
         }
 
-        internal function changedChatState(contact:JID, state:String):void
+        internal function changedChatState(contact : JID, state : String) : void
         {
             //var bareJID:String = contact.toBareJIDString();
-            var resource:String  = contact.resource;
+            var resource : String = contact.resource;
             if (resource == null) {
                 // invalid format
                 return;
             }
 
-            var res:ContactResource = getContactResource(contact);
+            var res : ContactResource = getContactResource(contact);
             if (res != null && res.chatState != state) {
                 res.chatState = state;
                 dispatchEvent(new XMPPPresenceEvent(
-                    XMPPPresenceEvent.CHANGED, contact));
+                        XMPPPresenceEvent.CHANGED, contact));
             }
         }
 
-        internal function receivedMessage(message:XMPPMessage):void
+        internal function receivedMessage(message : XMPPMessage) : void
         {
             dispatchEvent(new XMPPMessageEvent(XMPPMessageEvent.RECEIVED, message));
         }
 
-        public function sendMessage(contact:JID, body:String):void
+        public function sendMessage(contact : JID, body : String) : void
         {
-            var bareJID:String  = contact.toBareJIDString();
-            var resource:String = contact.resource;
+            var bareJID : String = contact.toBareJIDString();
+            var resource : String = contact.resource;
 
-            var rosterItem:RosterItem = getRosterItem(contact);
+            var rosterItem : RosterItem = getRosterItem(contact);
             if (rosterItem == null) {
                 sendNormalMessage(bareJID, body);
             } else {
 
-                var resources:Array;
-                var cr:ContactResource;
+                var resources : Array;
+                var cr : ContactResource;
 
                 if (resource == null) {
                     resources = rosterItem.getAllActiveResources();
@@ -425,27 +425,27 @@ package org.coderepos.net.xmpp.stream
 
         }
 
-        private function sendChatMessage(to:String, body:String):void
+        private function sendChatMessage(to : String, body : String) : void
         {
             send(
-                  '<message type="' + MessageType.CHAT
-                    + '" to="' + to + '">'
-                + '<body>' + body + '</body>'
-                + '</message>'
-            );
+                    '<message type="' + MessageType.CHAT
+                            + '" to="' + to + '">'
+                            + '<body>' + body + '</body>'
+                            + '</message>'
+                    );
         }
 
-        private function sendNormalMessage(to:String, body:String):void
+        private function sendNormalMessage(to : String, body : String) : void
         {
             send(
-                  '<message type="' + MessageType.NORMAL
-                    + '" to="' + to + '">'
-                + '<body>' + body + '</body>'
-                + '</message>'
-            );
+                    '<message type="' + MessageType.NORMAL
+                            + '" to="' + to + '">'
+                            + '<body>' + body + '</body>'
+                            + '</message>'
+                    );
         }
 
-        public function changePresence(show:String, status:String, priority:int=0):void
+        public function changePresence(show : String, status : String, priority : int = 0) : void
         {
             if (!_isReady)
                 throw new Error("not ready");
@@ -453,9 +453,9 @@ package org.coderepos.net.xmpp.stream
             if (priority <= -128 && priority > 128)
                 throw new ArgumentError("priority must be in between -127 and 128");
 
-            var presenceTag:String = '<presence';
+            var presenceTag : String = '<presence';
 
-            var children:Array = [];
+            var children : Array = [];
             if (show != null)
                 children.push('<show>' + show + '</show>');
             if (status != null)
@@ -482,10 +482,10 @@ package org.coderepos.net.xmpp.stream
             send(presenceTag);
         }
 
-        internal function receivedUnavailablePresence(contact:JID):void
+        internal function receivedUnavailablePresence(contact : JID) : void
         {
             // remove resource from roster
-            var item:RosterItem = getRosterItem(contact);
+            var item : RosterItem = getRosterItem(contact);
             if (item == null)
                 return;
 
@@ -493,177 +493,179 @@ package org.coderepos.net.xmpp.stream
             dispatchEvent(new XMPPPresenceEvent(XMPPPresenceEvent.LEFT, contact));
         }
 
-        internal function receivedPresence(presence:XMPPPresence):void
+        internal function receivedPresence(presence : XMPPPresence) : void
         {
-            var contact:JID = presence.from;
-            var item:RosterItem = getRosterItem(presence.from);
+            var contact : JID = presence.from;
+            var item : RosterItem = getRosterItem(presence.from);
 
             if (item == null)
                 return;
-            item.setResource(contact.resource, presence);
-            dispatchEvent(new XMPPPresenceEvent(XMPPPresenceEvent.CHANGED, contact));
+
+//            item.setResource(contact.resource, presence);
+            item.setResource(presence.from.resource, presence);
+            dispatchEvent(new XMPPPresenceEvent(XMPPPresenceEvent.CHANGED, contact, presence));
         }
 
-        internal function receivedSubscriptionRequest(sender:JID):void
+        internal function receivedSubscriptionRequest(sender : JID) : void
         {
-            var item:RosterItem = getRosterItem(sender);
+            var item : RosterItem = getRosterItem(sender);
             // if sender is in roster with subscription-status 'to',
             // automatically accept
             if (item != null && item.subscription == SubscriptionType.TO) {
                 acceptSubscriptionRequest(sender);
             } else {
                 dispatchEvent(new XMPPSubscriptionEvent(
-                    XMPPSubscriptionEvent.RECEIVED, sender));
+                        XMPPSubscriptionEvent.RECEIVED, sender));
             }
         }
 
-        public function acceptSubscriptionRequest(contact:JID):void
+        public function acceptSubscriptionRequest(contact : JID) : void
         {
             if (_isReady)
                 send(
-                    '<presence to="' + contact.toBareJIDString()
-                    + '" type="' + PresenceType.SUBSCRIBED + '"/>'
-                );
+                        '<presence to="' + contact.toBareJIDString()
+                                + '" type="' + PresenceType.SUBSCRIBED + '"/>'
+                        );
         }
 
-        public function denySubscriptionRequest(contact:JID):void
+        public function denySubscriptionRequest(contact : JID) : void
         {
             if (_isReady)
                 send(
-                    '<presence to="' + contact.toBareJIDString()
-                    + '" type="' + PresenceType.UNSUBSCRIBED + '"/>'
-                );
+                        '<presence to="' + contact.toBareJIDString()
+                                + '" type="' + PresenceType.UNSUBSCRIBED + '"/>'
+                        );
         }
 
-        internal function receivedSubscriptionResponse(sender:JID, type:String):void
+        internal function receivedSubscriptionResponse(sender : JID, type : String) : void
         {
             // TODO: dispatch only?
             // no need to edit some roster data, because roster-push comes.
         }
 
-        public function subscribe(contact:JID):void
+        public function subscribe(contact : JID) : void
         {
             if (_isReady)
                 send('<presence to="' + contact.toBareJIDString()
-                    + '" type="' + PresenceType.SUBSCRIBE + '" />');
+                        + '" type="' + PresenceType.SUBSCRIBE + '" />');
         }
 
-        public function unsubscribe(contact:JID):void
+        public function unsubscribe(contact : JID) : void
         {
             if (_isReady && _roster.containsKey(contact.toBareJIDString()))
                 send('<presence to="' + contact.toBareJIDString()
-                    + '" type="' + PresenceType.UNSUBSCRIBE + '" />');
+                        + '" type="' + PresenceType.UNSUBSCRIBE + '" />');
         }
 
-        public function getLastSeconds(contact:JID):void
+        public function getLastSeconds(contact : JID) : void
         {
             if (_isReady) // and check if this contacts support jappber:iq:last
                 send(
-                      '<iq to="'     + contact.toString()
-                        + '" id="'   + genNextID()
-                        + '" type="' + IQType.GET + '">'
-                    + '<query xmlns="' + XMPPNamespace.IQ_LAST + '" />'
-                    + '</iq>'
-                );
+                        '<iq to="' + contact.toString()
+                                + '" id="' + genNextID()
+                                + '" type="' + IQType.GET + '">'
+                                + '<query xmlns="' + XMPPNamespace.IQ_LAST + '" />'
+                                + '</iq>'
+                        );
         }
 
-        internal function gotLastSeconds(contact:JID, seconds:uint):void
+        internal function gotLastSeconds(contact : JID, seconds : uint) : void
         {
             trace('gotLastSeconds', contact.toString(), seconds);
             var cr : ContactResource = getContactResource(contact);
             cr.last = seconds;
         }
 
-        public function getVersion(contact:JID):void
+        public function getVersion(contact : JID) : void
         {
             if (_isReady) // and check if this contacts support jappber:iq:version
                 send(
-                    '<iq to="'       + contact.toString()
-                        + '" id="'   + genNextID()
-                        + '" type="' + IQType.GET + '">'
-                    + '<query xmlns="' + XMPPNamespace.IQ_VERSION + '" />'
-                    + '</iq>'
-                );
+                        '<iq to="' + contact.toString()
+                                + '" id="' + genNextID()
+                                + '" type="' + IQType.GET + '">'
+                                + '<query xmlns="' + XMPPNamespace.IQ_VERSION + '" />'
+                                + '</iq>'
+                        );
         }
 
-        internal function gotVersion(contact:JID, name:String,
-            version:String, os:String):void
+        internal function gotVersion(contact : JID, name : String,
+                                     version : String, os : String) : void
         {
             // TODO: search person from roster and update 'version'
             // TODO: should use Entity Capabilities?
         }
 
-        public function getContactAvatar(contact:JID):ByteArray
+        public function getContactAvatar(contact : JID) : ByteArray
         {
-            var item:RosterItem = getRosterItem(contact);
-            var avatarHash:String = item.avatarHash;
+            var item : RosterItem = getRosterItem(contact);
+            var avatarHash : String = item.avatarHash;
             if (avatarHash == null || !_avatarStore.has(avatarHash))
                 return null;
 
             return _avatarStore.get(avatarHash);
         }
 
-        internal function hasAvatar(hash:String):Boolean
+        internal function hasAvatar(hash : String) : Boolean
         {
             return _avatarStore.has(hash);
         }
 
-        internal function saveAvatar(type:String, avatarHash:String,
-            bytes:ByteArray):void
+        internal function saveAvatar(type : String, avatarHash : String,
+                                     bytes : ByteArray) : void
         {
             _avatarStore.store(type, avatarHash, bytes);
         }
 
-        internal function setContactAvatar(contact:JID, photoHash:String):void
+        internal function setContactAvatar(contact : JID, photoHash : String) : void
         {
-            var resource:String  = contact.resource;
-            if (resource == null)                
+            var resource : String = contact.resource;
+            if (resource == null)
                 return; // invalid format
 
-            var item:RosterItem = getRosterItem(contact);
+            var item : RosterItem = getRosterItem(contact);
             if (item != null && item.avatarHash != photoHash) {
                 item.avatarHash = photoHash;
                 dispatchEvent(new XMPPRosterEvent(
-                    XMPPRosterEvent.CHANGED, contact));
+                        XMPPRosterEvent.CHANGED, contact));
             }
         }
 
         /* XEP-0153: vCard-Based Avatars http://xmpp.org/extensions/xep-0153.html
-        public function updateAvator(jpegBytes:ByteArray):void
-        {
-            if (_isReady) {
-                var hasher:IHash = Crypto.getHash("sha1");
-                _avatarHash:String = Hex.fromArray(hasher.hash(jpegBytes));
-                send(
-                      '<iq type="' + IQType.SET + '" id="' + genNextID() + '">'
-                    + '<vCard xmlns="' + XMPPNamespace.VCARD + '">'
-                    + '<PHOTO>'
-                    + '<TYPE>image/jpeg</TYPE>'
-                    + '<BINVAL>'
-                    + Base64.encodeBytes(jpegBytes)
-                    + '</BINVAL>'
-                    + '</PHOTO>'
-                    + '</vCard>'
-                    + '</iq>'
-                );
-            }
-        }
-        */
+         public function updateAvator(jpegBytes:ByteArray):void
+         {
+         if (_isReady) {
+         var hasher:IHash = Crypto.getHash("sha1");
+         _avatarHash:String = Hex.fromArray(hasher.hash(jpegBytes));
+         send(
+         '<iq type="' + IQType.SET + '" id="' + genNextID() + '">'
+         + '<vCard xmlns="' + XMPPNamespace.VCARD + '">'
+         + '<PHOTO>'
+         + '<TYPE>image/jpeg</TYPE>'
+         + '<BINVAL>'
+         + Base64.encodeBytes(jpegBytes)
+         + '</BINVAL>'
+         + '</PHOTO>'
+         + '</vCard>'
+         + '</iq>'
+         );
+         }
+         }
+         */
 
         // XEP-0115 Entity Capabilities http://xmpp.org/extensions/xep-0115.html
-        public function contactSupportFeature(contact:JID, featureNS:String):Boolean
+        public function contactSupportFeature(contact : JID, featureNS : String) : Boolean
         {
-            var resource:String  = contact.resource;
+            var resource : String = contact.resource;
             if (resource == null)
                 return false;
 
-            var res:ContactResource = getContactResource(contact);
+            var res : ContactResource = getContactResource(contact);
             if (res == null)
                 return false;
 
-            var caps:Array = res.getCaps();
-            var cap:EntityCapabilities;
-            for each(var capId:String in caps) {
+            var caps : Array = res.getCaps();
+            var cap : EntityCapabilities;
+            for each(var capId : String in caps) {
                 cap = _capStore.get(capId);
                 if (cap != null && cap.supportFeature(featureNS))
                     return true;
@@ -671,49 +673,49 @@ package org.coderepos.net.xmpp.stream
             return false;
         }
 
-        internal function storeCap(node:String, cap:EntityCapabilities):void
+        internal function storeCap(node : String, cap : EntityCapabilities) : void
         {
             _capStore.store(node, cap);
         }
 
-        internal function hasCap(node:String):Boolean
+        internal function hasCap(node : String) : Boolean
         {
             return _capStore.has(node);
         }
 
-        internal function setContactCap(contact:JID, capId:String):void
+        internal function setContactCap(contact : JID, capId : String) : void
         {
-            var resource:String  = contact.resource;
+            var resource : String = contact.resource;
             if (resource == null) {
                 // invalid format
                 return;
             }
-            var res:ContactResource = getContactResource(contact);
+            var res : ContactResource = getContactResource(contact);
             if (res != null && !res.hasCap(capId)) {
                 res.setCap(capId);
                 dispatchEvent(new XMPPPresenceEvent(
-                    XMPPPresenceEvent.CHANGED, contact));
+                        XMPPPresenceEvent.CHANGED, contact));
             }
         }
 
         // MUC
-        public function joinRoom(roomID:JID, nick:String):void
+        public function joinRoom(roomID : JID, nick : String) : void
         {
             // _room[roomID.toBareJIDString()]
             send('<presence to="' + roomID.toBareJIDString() + "/" + nick + '">');
         }
 
-        public function changeRoomNick(roomID:JID, nick:String):void
+        public function changeRoomNick(roomID : JID, nick : String) : void
         {
             // _room[roomID.toBareJIDString()]
             send('<presence to="' + roomID.toBareJIDString() + "/" + nick + '">');
         }
 
-        public function exitRoom(roomID:JID, nick:String, message:String=null):void
+        public function exitRoom(roomID : JID, nick : String, message : String = null) : void
         {
-            var presenceTag:String =
-                '<presence type="' + PresenceType.UNAVAILABLE
-                + '" to="' + roomID.toBareJIDString() + "/" + nick + '"';
+            var presenceTag : String =
+                    '<presence type="' + PresenceType.UNAVAILABLE
+                            + '" to="' + roomID.toBareJIDString() + "/" + nick + '"';
             if (message == null) {
                 presenceTag += " />"
             } else {
@@ -725,30 +727,30 @@ package org.coderepos.net.xmpp.stream
         }
 
         /* TODO: implement
-        public function sendMessageWithinRoom(roomID:JID, message:String):void
-        {
-            send(
-                  '<message to="' + roomID.toBareJIDString()
-                    + '" type="' + MessageType.GROUPCHAT + '">'
-                + '<body>' + message + '</body>'
-                + '</message>'
-                );
-        }
+         public function sendMessageWithinRoom(roomID:JID, message:String):void
+         {
+         send(
+         '<message to="' + roomID.toBareJIDString()
+         + '" type="' + MessageType.GROUPCHAT + '">'
+         + '<body>' + message + '</body>'
+         + '</message>'
+         );
+         }
 
-        */
+         */
 
-        private function connectHandler(e:Event):void
+        private function connectHandler(e : Event) : void
         {
             dispatchEvent(e);
             changeState(new InitialHandler(this));
         }
 
-        private function closeHandler(e:Event):void
+        private function closeHandler(e : Event) : void
         {
             trace("[stream:close]");
             dispose();
             dispatchEvent(e);
-            var canRetry:Boolean = _reconnectionManager.saveRecordAndVerify();
+            var canRetry : Boolean = _reconnectionManager.saveRecordAndVerify();
             if (canRetry) {
                 trace("[stream:restart]");
                 start();
@@ -758,7 +760,7 @@ package org.coderepos.net.xmpp.stream
             }
         }
 
-        private function ioErrorHandler(e:IOErrorEvent):void
+        private function ioErrorHandler(e : IOErrorEvent) : void
         {
             trace("[stream:ioError]", e.text);
             _reconnectionManager.inactivate();
@@ -766,7 +768,7 @@ package org.coderepos.net.xmpp.stream
             dispatchEvent(e);
         }
 
-        private function securityErrorHandler(e:SecurityErrorEvent):void
+        private function securityErrorHandler(e : SecurityErrorEvent) : void
         {
             trace("[stream:securityError]", e.text);
             _reconnectionManager.inactivate();
@@ -774,7 +776,7 @@ package org.coderepos.net.xmpp.stream
             dispatchEvent(e);
         }
 
-        private function protocolErrorHandler(e:XMPPErrorEvent):void
+        private function protocolErrorHandler(e : XMPPErrorEvent) : void
         {
             trace("[stream:protocolError]", e.message);
             _reconnectionManager.inactivate();
@@ -782,7 +784,7 @@ package org.coderepos.net.xmpp.stream
             dispatchEvent(e);
         }
 
-        private function authErrorHandler(e:XMPPErrorEvent):void
+        private function authErrorHandler(e : XMPPErrorEvent) : void
         {
             trace("[stream:authError]", e.message);
             _reconnectionManager.inactivate();
