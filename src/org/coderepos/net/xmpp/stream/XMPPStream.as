@@ -503,7 +503,7 @@ package org.coderepos.net.xmpp.stream
 
 //            item.setResource(contact.resource, presence);
             item.setResource(presence.from.resource, presence);
-            dispatchEvent(new XMPPPresenceEvent(XMPPPresenceEvent.CHANGED, contact, presence));
+            dispatchEvent(new XMPPPresenceEvent(XMPPPresenceEvent.CHANGED, contact));
         }
 
         internal function receivedSubscriptionRequest(sender : JID) : void
