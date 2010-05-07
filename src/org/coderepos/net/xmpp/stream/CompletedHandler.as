@@ -20,6 +20,8 @@ package org.coderepos.net.xmpp.stream
     import flash.system.Capabilities;
     import flash.utils.ByteArray;
 
+    import mx.utils.ObjectUtil;
+
     import org.coderepos.date.W3CDTF;
     import org.coderepos.net.xmpp.ChatState;
     import org.coderepos.net.xmpp.IQType;
@@ -291,7 +293,7 @@ package org.coderepos.net.xmpp.stream
                 var photoHash:String = photo.text;
                 if (photoHash != null && photoHash.length > 0) {
                     if (_stream.hasAvatar(photoHash)) {
-                        trace("found avatar for: " + photoHash);
+                        //trace("found avatar for: " + photoHash);
                         _stream.setContactAvatar(sender, photoHash);
                     } else {
                         //trace("not found avatar for: " + photoHash);
@@ -322,7 +324,7 @@ package org.coderepos.net.xmpp.stream
 
             var capId:String = node + '#' + ver;
             if (_stream.hasCap(capId)) {
-                trace("found capabilities: " + capId);
+                //trace("found capabilities: " + capId);
                 _stream.setContactCap(sender, capId);
             } else {
                 //trace("not found capabilities: " + capId);
@@ -339,10 +341,11 @@ package org.coderepos.net.xmpp.stream
             if (exts == null)
                 return;
             var extParts:Array = exts.split(/\s+/);
+            var extCapId:String;
             for each(var ext:String in extParts) {
-                var extCapId:String = node + '#' + ext;
+                extCapId = node + '#' + ext;
                 if (_stream.hasCap(extCapId)) {
-                    trace("found extended capabilities: " + extCapId);
+                    //trace("found extended capabilities: " + extCapId);
                     _stream.setContactCap(sender, extCapId);
                 } else {
                     //trace("not found extended capabilities: " + extCapId);
@@ -493,8 +496,9 @@ package org.coderepos.net.xmpp.stream
                     var query:XMLElement =
                         elem.getFirstElementNS(XMPPNamespace.DISCO_ITEMS, "query");
                     var items:Array = query.getElements("item");
+                    var serviceJID:String;
                     for each(var itemElem:XMLElement in items) {
-                        var serviceJID:String = itemElem.getAttr("jid");
+                        serviceJID = itemElem.getAttr("jid");
                         if (serviceJID != null) {
                             _stream.addService(serviceJID);
                             _stream.send(

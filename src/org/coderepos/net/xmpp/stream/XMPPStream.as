@@ -20,6 +20,8 @@ package org.coderepos.net.xmpp.stream
     import flash.events.SecurityErrorEvent;
     import flash.utils.ByteArray;
 
+    import mx.utils.ObjectUtil;
+
     import org.coderepos.net.xmpp.IQType;
     import org.coderepos.net.xmpp.JID;
     import org.coderepos.net.xmpp.MessageType;
@@ -155,12 +157,12 @@ package org.coderepos.net.xmpp.stream
                 throw new Error("already connected.");
 
             _connection = new XMPPConnection(_config);
-            _connection.addEventListener(Event.CONNECT, connectHandler);
-            _connection.addEventListener(Event.CLOSE, closeHandler);
-            _connection.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
-            _connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-            _connection.addEventListener(XMPPErrorEvent.PROTOCOL_ERROR, protocolErrorHandler);
-            _connection.addEventListener(XMPPErrorEvent.AUTH_ERROR, authErrorHandler);
+            _connection.addEventListener(Event.CONNECT, connectHandler, false, 0, true);
+            _connection.addEventListener(Event.CLOSE, closeHandler, false, 0, true);
+            _connection.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler, false, 0, true);
+            _connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler, false, 0, true);
+            _connection.addEventListener(XMPPErrorEvent.PROTOCOL_ERROR, protocolErrorHandler, false, 0, true);
+            _connection.addEventListener(XMPPErrorEvent.AUTH_ERROR, authErrorHandler, false, 0, true);
             _connection.connect();
 
             dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.START));
@@ -490,7 +492,7 @@ package org.coderepos.net.xmpp.stream
                 return;
 
             item.removeResource(contact.resource);
-            dispatchEvent(new XMPPPresenceEvent(XMPPPresenceEvent.LEAVED, contact));
+            dispatchEvent(new XMPPPresenceEvent(XMPPPresenceEvent.LEFT, contact));
         }
 
         internal function receivedPresence(presence:XMPPPresence):void
@@ -662,8 +664,9 @@ package org.coderepos.net.xmpp.stream
                 return false;
 
             var caps:Array = res.getCaps();
+            var cap:EntityCapabilities;
             for each(var capId:String in caps) {
-                var cap:EntityCapabilities = _capStore.get(capId);
+                cap = _capStore.get(capId);
                 if (cap != null && cap.supportFeature(featureNS))
                     return true;
             }
@@ -787,6 +790,10 @@ package org.coderepos.net.xmpp.stream
             _reconnectionManager.inactivate();
             dispose();
             dispatchEvent(e);
+        }
+
+        public function get reconnectionManager() : ReconnectionManager {
+            return _reconnectionManager;
         }
     }
 }
