@@ -20,8 +20,6 @@ package org.coderepos.net.xmpp.stream
     import flash.events.SecurityErrorEvent;
     import flash.utils.ByteArray;
 
-    import mx.utils.ObjectUtil;
-
     import org.coderepos.net.xmpp.IQType;
     import org.coderepos.net.xmpp.JID;
     import org.coderepos.net.xmpp.MessageType;

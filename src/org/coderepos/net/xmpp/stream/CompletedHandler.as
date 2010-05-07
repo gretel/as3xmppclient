@@ -20,8 +20,6 @@ package org.coderepos.net.xmpp.stream
     import flash.system.Capabilities;
     import flash.utils.ByteArray;
 
-    import mx.utils.ObjectUtil;
-
     import org.coderepos.date.W3CDTF;
     import org.coderepos.net.xmpp.ChatState;
     import org.coderepos.net.xmpp.IQType;

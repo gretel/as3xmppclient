@@ -12,8 +12,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package org.coderepos.net.xmpp.roster
 {
-    import mx.utils.ObjectUtil;
-
     import org.coderepos.net.xmpp.JID;
     import org.coderepos.net.xmpp.XMPPPresence;
     import org.coderepos.net.xmpp.exceptions.XMPPProtocolError;
