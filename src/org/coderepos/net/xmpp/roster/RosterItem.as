@@ -12,11 +12,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package org.coderepos.net.xmpp.roster
 {
+    import mx.utils.ObjectUtil;
+
     import org.coderepos.net.xmpp.JID;
     import org.coderepos.net.xmpp.XMPPPresence;
     import org.coderepos.net.xmpp.exceptions.XMPPProtocolError;
     import org.coderepos.xml.XMLElement;
 
+    [Bindable]
     public class RosterItem
     {
         public static function fromElement(elem:XMLElement):RosterItem
@@ -99,8 +102,9 @@ package org.coderepos.net.xmpp.roster
 
         public function get hasAvtiveResource():Boolean
         {
+            var resource:ContactResource;
             for (var prop:String in _resources) {
-                var resource:ContactResource = _resources[prop];
+                resource = _resources[prop];
                 if (resource.isActive)
                     return true;
             }
@@ -110,8 +114,9 @@ package org.coderepos.net.xmpp.roster
         public function getActiveResource():ContactResource
         {
             var choosed:ContactResource = null;
+            var resource:ContactResource;
             for (var prop:String in _resources) {
-                var resource:ContactResource = _resources[prop];
+                resource = _resources[prop];
                 if (resource.isActive) {
                     if (choosed == null) {
                         choosed = resource;
@@ -126,8 +131,9 @@ package org.coderepos.net.xmpp.roster
         public function getAllActiveResources():Array
         {
             var resources:Array = [];
+            var resource:ContactResource;
             for (var prop:String in _resources) {
-                var resource:ContactResource = _resources[prop];
+                resource = _resources[prop];
                 if (resource.isActive) {
                     resources.push(resource);
                 }

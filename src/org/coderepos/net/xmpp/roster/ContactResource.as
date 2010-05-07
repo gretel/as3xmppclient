@@ -15,6 +15,7 @@ package org.coderepos.net.xmpp.roster
     import org.coderepos.net.xmpp.StatusType;
     import org.coderepos.net.xmpp.XMPPPresence;
 
+    [Bindable]
     public class ContactResource
     {
         private var _resource:String;
@@ -35,10 +36,10 @@ package org.coderepos.net.xmpp.roster
         {
             _resource  = resource;
             _chatState = null;
+            _caps      = {};
             _status    = presence.status;
             _show      = presence.show;
-            _caps      = {};
-            _priority  = 0;
+            _priority  = presence.priority;
         }
 
         public function updatePresence(presence:XMPPPresence):void
@@ -50,6 +51,7 @@ package org.coderepos.net.xmpp.roster
 
         public function get isActive():Boolean
         {
+            // TODO fix vague estimation
             return (_status != null && _status == StatusType.CHAT);
         }
 
