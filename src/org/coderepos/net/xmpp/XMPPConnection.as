@@ -137,11 +137,11 @@ package org.coderepos.net.xmpp
 
         private function addSocketEventListeners(s:Socket):void
         {
-            s.addEventListener(Event.CONNECT, dispatchEvent);
-            s.addEventListener(Event.CLOSE, closeHandler);
-            s.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
-            s.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-            s.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
+            s.addEventListener(Event.CONNECT, dispatchEvent, false, 0, true);
+            s.addEventListener(Event.CLOSE, closeHandler, false, 0, true);
+            s.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler, false, 0, true);
+            s.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler, false, 0, true);
+            s.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler, false, 0, true);
         }
 
         private function removeSocketEventListeners(s:Socket):void
