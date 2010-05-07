@@ -7,8 +7,6 @@ package
     import flash.display.NativeWindow;
     import flash.desktop.NativeApplication;
 
-    import nl.demonsters.debugger.MonsterDebugger;
-
     import org.coderepos.net.xmpp.stream.XMPPStream;
     import org.coderepos.net.xmpp.JID;
     import org.coderepos.net.xmpp.XMPPConfig;
@@ -28,7 +26,6 @@ package
             return _app;
         }
 
-        private var _debugger:MonsterDebugger;
         private var _rootWindow:DemoXMPP;
         private var _setting:DemoSetting;
         private var _settingWindow:DemoSettingWindow;
@@ -38,7 +35,6 @@ package
 
         public function DemoApp()
         {
-           _debugger = new MonsterDebugger(this);
            _setting = DemoSetting.load();
            _chatWindows = {};
         }
