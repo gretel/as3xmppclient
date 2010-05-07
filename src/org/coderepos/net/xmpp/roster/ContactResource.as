@@ -52,7 +52,8 @@ package org.coderepos.net.xmpp.roster
         public function get isActive():Boolean
         {
             // TODO fix vague estimation
-            return (_status != null && _status == StatusType.CHAT);
+            return (_status != null);
+//            return (_status != null && _status == StatusType.CHAT);
         }
 
         public function get chatState():String
