@@ -40,6 +40,7 @@ package org.coderepos.net.xmpp.stream
     import org.coderepos.net.xmpp.events.XMPPStreamEvent;
     import org.coderepos.net.xmpp.events.XMPPSubscriptionEvent;
     import org.coderepos.net.xmpp.exceptions.XMPPProtocolError;
+    import org.coderepos.net.xmpp.roster.ClientVersion;
     import org.coderepos.net.xmpp.roster.ContactResource;
     import org.coderepos.net.xmpp.roster.RosterItem;
     import org.coderepos.net.xmpp.util.IDGenerator;
@@ -79,7 +80,7 @@ package org.coderepos.net.xmpp.stream
             _services = {};
             _isReady = false;
             _features = new XMPPServerFeatures();
-            // XXX: JID validation ?
+            // TODO: JID validation ?
             _jid = new JID(_config.username);
             _idGenerator = new IDGenerator("req:", 5);
             _saslFactory = new SASLMechanismDefaultFactory(
@@ -152,7 +153,7 @@ package org.coderepos.net.xmpp.stream
         public function start() : void
         {
             if (connected)
-                throw new Error("already connected.");
+                throw new Error("already connected");
 
             _connection = new XMPPConnection(_config);
             _connection.addEventListener(Event.CONNECT, connectHandler, false, 0, true);
@@ -212,7 +213,7 @@ package org.coderepos.net.xmpp.stream
             _handler.run();
         }
 
-        internal function initiated() : void
+        internal function established() : void
         {
             if (_features.supportTLS) {
                 dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.TLS_NEGOTIATING));
@@ -221,8 +222,7 @@ package org.coderepos.net.xmpp.stream
                 var mech : ISASLMechanism = findProperSASLMechanism();
                 if (mech == null)
                 // TODO: Accept anonymous?
-                    throw new XMPPProtocolError(
-                            "Server doesn't support SASL mechanisms which this library supports.");
+                    throw new XMPPProtocolError("server does not support any compatible SASL mechanisms");
 
                 dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.AUTHENTICATING));
                 changeState(new SASLHandler(this, mech));
@@ -239,9 +239,8 @@ package org.coderepos.net.xmpp.stream
         {
             var mech : ISASLMechanism = findProperSASLMechanism();
             if (mech == null) {
-                // XXX: Accept anonymous ?
-                throw new XMPPProtocolError(
-                        "Server doesn't support SASL mechanisms which this library supports.");
+                // TODO: Accept anonymous?
+                throw new XMPPProtocolError("server does not support any compatible SASL mechanisms");
             }
 
             dispatchEvent(new XMPPStreamEvent(XMPPStreamEvent.AUTHENTICATING));
@@ -257,7 +256,7 @@ package org.coderepos.net.xmpp.stream
             } else {
                 // without Binding
                 throw new XMPPProtocolError(
-                        "Server doesn't support resource-binding");
+                        "server does not support resource-binding");
             }
         }
 
@@ -451,7 +450,7 @@ package org.coderepos.net.xmpp.stream
                 throw new Error("not ready");
 
             if (priority <= -128 && priority > 128)
-                throw new ArgumentError("priority must be in between -127 and 128");
+                throw new ArgumentError("priority must be in range of -127 and 128");
 
             var presenceTag : String = '<presence';
 
@@ -592,8 +591,10 @@ package org.coderepos.net.xmpp.stream
         internal function gotVersion(contact : JID, name : String,
                                      version : String, os : String) : void
         {
-            // TODO: search person from roster and update 'version'
             // TODO: should use Entity Capabilities?
+            trace('gotVersion', contact.toString(), name, version, os);
+            var item : RosterItem = getRosterItem(contact);
+            item.version = new ClientVersion(name, version, os);
         }
 
         public function getContactAvatar(contact : JID) : ByteArray
