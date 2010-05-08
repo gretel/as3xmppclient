@@ -18,26 +18,35 @@ package org.coderepos.net.xmpp.caps
 
     import flash.utils.ByteArray;
 
+    import mx.utils.ObjectUtil;
+
     import org.coderepos.net.xmpp.XMPPNamespace;
     import org.coderepos.xml.XMLElement;
 
-    // [XEP-0115]
+    // XEP-0115: Entity Capabilities http://xmpp.org/extensions/xep-0115.html
     public class EntityCapabilities
     {
         public static function fromElement(query:XMLElement):EntityCapabilities
         {
             var cap:EntityCapabilities = new EntityCapabilities();
             var identities:Array = query.getElements("identity");
+            var name:String;
+            var category:String;
+            var type:String;
+            var lang:String;
+            var info:String;
             for each(var identity:XMLElement in identities) {
-                var name:String = identity.getAttr("name");
-                var category:String = identity.getAttr("category");
-                var type:String = identity.getAttr("type");
-                var lang:String =
+                name = identity.getAttr("name");
+                category = identity.getAttr("category");
+                type = identity.getAttr("type");
+                lang =
                     identity.getAttrNS("http://www.w3c.org/XML/1998/namespace", "lang");
                 if (name != null && category != null && type != null) {
                     cap.addIdentity(name, category, type, lang);
                 } else {
-                    // XXX: should throw exception?
+                    // TODO remove debugging trace
+                    trace('unknown identity', ObjectUtil.toString(identity));
+                    // TODO: should throw exception?
                     // throw new XMPPProtocolError("invalid identity");
                 }
             }
@@ -45,10 +54,10 @@ package org.coderepos.net.xmpp.caps
             for each(var feature:XMLElement in features)
                 cap.addFeature(feature.text);
 
+            // TODO implement
             /*
             var forms:Array = query.getElementsNS(XMPPNamespace.DATA, "x");
             for each(var form:XMLElement in forms) {
-
             }
             */
 
