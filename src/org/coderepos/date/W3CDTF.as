@@ -25,7 +25,6 @@ package org.coderepos.date {
      * @langversion ActionScript 3.0
      * @playerversion 9.0
      *
-     * XXX:
      *   This code is borrowed from as3corelib's DateUtil class.
      *   I copied same functionality because I want to remove dependencies on mx-libraries.
      */
@@ -85,8 +84,8 @@ package org.coderepos.date {
 			}
 			catch (e:Error)
 			{
-				var eStr:String = "Unable to parse the string [" +str+ "] into a date. ";
-				eStr += "The internal error was: " + e.toString();
+				var eStr:String = "unable to parse the string [" +str+ "] into a date.";
+				eStr += " the internal error was: " + e.toString();
 				throw new Error(eStr);
 			}
       return finalDate;
