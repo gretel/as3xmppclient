@@ -28,13 +28,13 @@ package org.coderepos.net.xmpp.vcard
             return (hash in _store);
         }
 
-        // XXX: should save content-type
+        // TODO: should save content-type
         public function store(type:String, hash:String, bytes:ByteArray):void
         {
             _store[hash] = bytes;
         }
 
-        // XXX: should return content-type
+        // TODO: should return content-type
         //public function get(hash:String):DisplayObject
         public function get(hash:String):ByteArray
         {
