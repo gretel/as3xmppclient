@@ -72,7 +72,7 @@ package org.coderepos.net.xmpp.stream
         {
             //trace("[FEATURES]");
             _stream.features = XMPPServerFeatures.fromElement(elem);
-            _stream.initiated();
+            _stream.established();
         }
 
         private function errorHandler(elem:XMLElement):void
