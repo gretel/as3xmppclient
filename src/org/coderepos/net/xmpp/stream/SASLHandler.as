@@ -42,7 +42,7 @@ package org.coderepos.net.xmpp.stream
                     + 'xmlns="'+XMPPNamespace.SASL+'" '
                     + 'mechanism="'+ _mech.name +'"';
             var start:String = _mech.start();
-            trace("[SASL:start]");
+//            trace("[SASL:start]");
             if (start != null && start.length > 0) {
                 authTag += '>';
                 authTag += Base64.encode(start);
@@ -82,7 +82,7 @@ package org.coderepos.net.xmpp.stream
             if (version == null)
                 throw new XMPPProtocolError("stream@version not found");
             if (version != "1.0")
-                throw new XMPPProtocolError("Unsupported XMPP protocol version: " + version);
+                throw new XMPPProtocolError("unsupported XMPP protocol version: " + version);
             _stream.setAttribute("id", id);
             _stream.setAttribute("version", version);
         }
@@ -103,7 +103,7 @@ package org.coderepos.net.xmpp.stream
                 response = _mech.step(challenge);
             } catch (e:*) {
                 if (e is SASLBadChallengeError) {
-                    throw new XMPPProtocolError("SASL bad challenge:" + challenge);
+                    throw new XMPPProtocolError("SASL invalid challenge: " + challenge);
                 } else {
                     throw e;
                 }
@@ -117,13 +117,13 @@ package org.coderepos.net.xmpp.stream
 
         private function failureHandler(elem:XMLElement):void
         {
-            trace("[SASL:failure]");
+//            trace("[SASL:failure]");
             throw new XMPPProtocolError("SASL failure");
         }
 
         private function successHandler(elem:XMLElement):void
         {
-            trace("[SASL:success]");
+//            trace("[SASL:success]");
             _stream.clearBuffer();
             _stream.send(
             '<stream:stream '
@@ -136,8 +136,8 @@ package org.coderepos.net.xmpp.stream
 
         private function abortHandler(elem:XMLElement):void
         {
-            trace("[SASL:abort]");
-            throw new XMPPProtocolError("SASL aborted");
+//            trace("[SASL:abort]");
+            throw new XMPPProtocolError("SASL authentication aborted");
         }
     }
 }

@@ -571,6 +571,7 @@ package org.coderepos.net.xmpp.stream
 
         internal function gotLastSeconds(contact : JID, seconds : uint) : void
         {
+            // TODO remove debugging trace
             trace('gotLastSeconds', contact.toString(), seconds);
             var cr : ContactResource = getContactResource(contact);
             cr.last = seconds;
@@ -747,22 +748,22 @@ package org.coderepos.net.xmpp.stream
 
         private function closeHandler(e : Event) : void
         {
-            trace("[stream:close]");
+//            trace("[stream:close]");
             dispose();
             dispatchEvent(e);
             var canRetry : Boolean = _reconnectionManager.saveRecordAndVerify();
             if (canRetry) {
-                trace("[stream:restart]");
+//                trace("[stream:restart]");
                 start();
             } else {
-                trace("[stream:clear]");
+//                trace("[stream:clear]");
                 _reconnectionManager.clear();
             }
         }
 
         private function ioErrorHandler(e : IOErrorEvent) : void
         {
-            trace("[stream:ioError]", e.text);
+//            trace("[stream:ioError]", e.text);
             _reconnectionManager.inactivate();
             dispose();
             dispatchEvent(e);
@@ -770,7 +771,7 @@ package org.coderepos.net.xmpp.stream
 
         private function securityErrorHandler(e : SecurityErrorEvent) : void
         {
-            trace("[stream:securityError]", e.text);
+//            trace("[stream:securityError]", e.text);
             _reconnectionManager.inactivate();
             dispose();
             dispatchEvent(e);
@@ -778,7 +779,7 @@ package org.coderepos.net.xmpp.stream
 
         private function protocolErrorHandler(e : XMPPErrorEvent) : void
         {
-            trace("[stream:protocolError]", e.message);
+//            trace("[stream:protocolError]", e.message);
             _reconnectionManager.inactivate();
             dispose();
             dispatchEvent(e);
@@ -786,7 +787,7 @@ package org.coderepos.net.xmpp.stream
 
         private function authErrorHandler(e : XMPPErrorEvent) : void
         {
-            trace("[stream:authError]", e.message);
+//            trace("[stream:authError]", e.message);
             _reconnectionManager.inactivate();
             dispose();
             dispatchEvent(e);

@@ -61,7 +61,7 @@ package org.coderepos.net.xmpp.stream
             if (version == null)
                 throw new XMPPProtocolError("stream@version not found");
             if (version != "1.0")
-                throw new XMPPProtocolError("Unsupported XMPP protocol version: " + version);
+                throw new XMPPProtocolError("unsupported XMPP protocol version: " + version);
             _stream.setAttribute("id", id);
             _stream.setAttribute("version", version);
         }
@@ -76,7 +76,7 @@ package org.coderepos.net.xmpp.stream
 
         private function proceedHandler(elem:XMLElement):void
         {
-            trace("[TLS:proceed]");
+//            trace("[TLS:proceed]");
             _stream.switchToTLS();
             _stream.send(
             //'<?xml version="1.0" encoding="utf-8"?>'
@@ -92,13 +92,15 @@ package org.coderepos.net.xmpp.stream
         {
             // not come here,
             // because as3crypto TLSEngine disconnect socket on failure.
-            trace("[TLS:failure]");
+//            trace("[TLS:failure]");
+            throw new XMPPProtocolError("TLS socket error");
         }
 
         private function unknownHandler(ns:String, localName:String, depth:uint):void
         {
-            trace("[UNKNOWN]");
-            trace(ns, localName, depth);
+//            trace("[UNKNOWN]");
+            throw new XMPPProtocolError("unknown TLS error: " + ns);
+//            trace(ns, localName, depth);
         }
     }
 }

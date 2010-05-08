@@ -108,8 +108,8 @@ package org.coderepos.net.xmpp.stream
                     } catch (e:*) {
                         throw new XMPPProtocolError("Invalid JID:" + res.text);
                     }
-                    trace("[ResourceBinding:success]");
-                    trace(res.text);
+//                    trace("[ResourceBinding:success]");
+//                    trace(res.text);
                     _stream.bindJID(boundJID);
 
                 } else if (iqType == IQType.ERROR) {

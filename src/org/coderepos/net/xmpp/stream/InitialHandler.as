@@ -77,14 +77,15 @@ package org.coderepos.net.xmpp.stream
 
         private function errorHandler(elem:XMLElement):void
         {
-            trace("[ERROR]");
+//            trace("[ERROR]");
             throw new XMPPProtocolError("failed to initiate stream");
         }
 
         private function unknownHandler(ns:String, localName:String, depth:uint):void
         {
-            trace("[UNKNOWN]");
-            trace(ns, localName, depth);
+//            trace("[UNKNOWN]");
+            throw new XMPPProtocolError("unknown stream error: " + ns);
+//            trace(ns, localName, depth);
         }
     }
 }
