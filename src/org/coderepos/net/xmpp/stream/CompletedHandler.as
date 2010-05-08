@@ -619,7 +619,7 @@ package org.coderepos.net.xmpp.stream
 
             block.getElements("item");
 
-            // TODO: do something?
+            // TODO: implement
         }
 
         // XEP-0016: Privacy Lists http://xmpp.org/extensions/xep-0016.html
@@ -633,7 +633,7 @@ package org.coderepos.net.xmpp.stream
             query.getFirstElement("default");
             query.getElements("list");
 
-            // TODO: do something?
+            // TODO: implement
         }
 
         // XEP-0083: Nested Roster Groups http://xmpp.org/extensions/xep-0083.html
@@ -657,13 +657,13 @@ package org.coderepos.net.xmpp.stream
                     _stream.send('<iq type="result" id="' + iqid + '"/>');
                 }
             } else if (type == IQType.RESULT) {
-                // TODO: do something?
+                // TODO: implement
             }
         }
 
         private function handleUnknownIQ(elem:XMLElement):void
         {
-            // TODO: do something?
+                // TODO: implement
         }
     }
 }
