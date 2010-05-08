@@ -12,8 +12,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package org.coderepos.net.xmpp.roster
 {
-    import mx.utils.ObjectUtil;
-
     import org.coderepos.net.xmpp.JID;
     import org.coderepos.net.xmpp.XMPPPresence;
     import org.coderepos.net.xmpp.exceptions.XMPPProtocolError;
@@ -26,12 +24,12 @@ package org.coderepos.net.xmpp.roster
         {
             var jidString:String = elem.getAttr("jid");
             if (jidString == null)
-                throw new XMPPProtocolError("JID for roster elem not found.");
+                throw new XMPPProtocolError("JID for roster elem not found");
             var jid:JID;
             try {
                 jid = new JID(jidString);
             } catch (e:*) {
-                throw new XMPPProtocolError("Invalid JID format: " + jidString);
+                throw new XMPPProtocolError("invalid JID format: " + jidString);
             }
             var item:RosterItem = new RosterItem(jid);
             var name:String = elem.getAttr("name");
@@ -53,12 +51,14 @@ package org.coderepos.net.xmpp.roster
 
         private var _jid:JID;
 
-        public var name:String;
-        public var subscription:String;
-        public var ask:String;
+        private var _name:String;
+        private var _subscription:String;
+        private var _ask:String;
 
         private var _groups:Object;
         private var _resources:Object;
+
+        private var _version:ClientVersion;
 
         // XEP-0153 vCard based avatar
         private var _avatarHash:String;
@@ -112,19 +112,19 @@ package org.coderepos.net.xmpp.roster
 
         public function getActiveResource():ContactResource
         {
-            var choosed:ContactResource = null;
+            var chosen:ContactResource = null;
             var resource:ContactResource;
             for (var prop:String in _resources) {
                 resource = _resources[prop];
                 if (resource.isActive) {
-                    if (choosed == null) {
-                        choosed = resource;
-                    } else if (choosed.priority < resource.priority) {
-                        choosed = resource;
+                    if (chosen == null) {
+                        chosen = resource;
+                    } else if (chosen.priority < resource.priority) {
+                        chosen = resource;
                     }
                 }
             }
-            return choosed;
+            return chosen;
         }
 
         public function getAllActiveResources():Array
@@ -172,10 +172,18 @@ package org.coderepos.net.xmpp.roster
 
         public function get groups():Array
         {
-            var groups:Array = [];
+            var groupsArr:Array = [];
             for (var groupName:String in _groups)
-                groups.push(groupName);
-            return groups;
+                groupsArr.push(groupName);
+            return groupsArr;
+        }
+
+        public function get resources():Array
+        {
+            var resourcesArr:Array = [];
+            for (var resource:String in _resources)
+                resourcesArr.push(resource);
+            return resourcesArr;
         }
 
         public function updateItem(item:RosterItem):void
@@ -187,6 +195,38 @@ package org.coderepos.net.xmpp.roster
             for each(var groupName:String in item.groups) {
                 addGroup(groupName);
             }
+        }
+
+        public function get name() : String {
+            return _name;
+        }
+
+        public function set name(value : String) : void {
+            _name = value;
+        }
+
+        public function get subscription() : String {
+            return _subscription;
+        }
+
+        public function set subscription(value : String) : void {
+            _subscription = value;
+        }
+
+        public function get ask() : String {
+            return _ask;
+        }
+
+        public function set ask(value : String) : void {
+            _ask = value;
+        }
+
+        public function get version() : ClientVersion {
+            return _version;
+        }
+
+        public function set version(value : ClientVersion) : void {
+            _version = value;
         }
     }
 }
