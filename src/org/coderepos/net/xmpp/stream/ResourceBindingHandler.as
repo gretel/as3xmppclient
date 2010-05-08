@@ -106,7 +106,7 @@ package org.coderepos.net.xmpp.stream
                     try {
                         boundJID = new JID(res.text);
                     } catch (e:*) {
-                        throw new XMPPProtocolError("Invalid JID:" + res.text);
+                        throw new XMPPProtocolError("invalid JID: " + res.text);
                     }
 //                    trace("[ResourceBinding:success]");
 //                    trace(res.text);
@@ -123,7 +123,7 @@ package org.coderepos.net.xmpp.stream
 
                     } else {
                         throw new XMPPProtocolError(
-                            "Failed to bind resource: " + _currentResource);
+                            "failed to bind resource: " + _currentResource);
                     }
 
                 } else {

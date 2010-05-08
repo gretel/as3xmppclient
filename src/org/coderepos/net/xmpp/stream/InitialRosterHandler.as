@@ -64,7 +64,7 @@ package org.coderepos.net.xmpp.stream
                     elem.getFirstElementNS(XMPPNamespace.IQ_ROSTER, "query");
 
                 if (query == null)
-                    throw new XMPPProtocolError("Roster query not found.");
+                    throw new XMPPProtocolError("roster query not found");
 
                 var items:Array = query.getElements("item");
                 for each(var item:XMLElement in items) {
@@ -75,7 +75,7 @@ package org.coderepos.net.xmpp.stream
                 _stream.initiatedRoster();
 
             } else {
-                throw new XMPPProtocolError("Failed to establish session.");
+                throw new XMPPProtocolError("failed to establish session");
             }
         }
     }

@@ -47,7 +47,7 @@ package org.coderepos.net.xmpp.caps
                     // TODO remove debugging trace
                     trace('unknown identity', ObjectUtil.toString(identity));
                     // TODO: should throw exception?
-                    // throw new XMPPProtocolError("invalid identity");
+                    // throw new XMPPProtocolError("invalid identity");                                                      Av
                 }
             }
             var features:Array = query.getElements("features");
