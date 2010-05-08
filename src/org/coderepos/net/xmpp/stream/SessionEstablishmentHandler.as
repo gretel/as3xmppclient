@@ -60,7 +60,7 @@ package org.coderepos.net.xmpp.stream
                 //trace("[SESSION success]");
                 _stream.establishedSession();
             } else {
-                throw new XMPPProtocolError("Failed to establish session.");
+                throw new XMPPProtocolError("failed to establish session");
             }
         }
 
