@@ -87,7 +87,7 @@ package org.coderepos.net.xmpp
         public function connect():void
         {
             if (connected)
-                throw new Error("already connected.");
+                throw new Error("already connected");
 
             if (_socket == null || _socket is TLSSocket) {
                 if (_socket != null)
@@ -125,7 +125,7 @@ package org.coderepos.net.xmpp
         public function send(message:String):void
         {
             if (!connected)
-                throw new Error("Socket not connected.");
+                throw new Error("socket not connected");
 
             //trace(message);
             var bytes:ByteArray = new ByteArray();
